@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - BrAPI</title>
+  <link rel="stylesheet" href="/dashboard/style.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h2>BrAPI</h2>
+
+    <a href="/admin?tab=status" class="side-item <%= query?.tab === 'status' ? 'active' : '' %>">
+      📊 Status
+    </a>
+
+    <a href="/admin?tab=search" class="side-item <%= query?.tab === 'search' ? 'active' : '' %>">
+      🔍 Buscar
+    </a>
+
+    <a href="/admin?tab=create" class="side-item <%= query?.tab === 'create' ? 'active' : '' %>">
+      ➕ Criar usuário
+    </a>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <header>
+      <div class="left">
+        <span>Painel Admin</span>
+        <a class="left-a" href="/dashboard">Dashboard</a>
+      </div>
+
+      <div class="right">
+        <span class="user"><%= user.username %></span>
+
+        <form method="POST" action="/auth/logout">
+          <button>Sair</button>
+        </form>
+      </div>
+    </header>
+
+    <main class="dashboard">
+
+      <% const tab = query?.tab || "search"; %>
+
+      <!-- 🔍 SEARCH -->
+      <% if (tab === "search") { %>
+
+      <div class="card">
+        <h3>Buscar usuário</h3>
+
+        <form method="GET" action="/admin">
+          <input type="hidden" name="tab" value="search">
+          <input name="q" placeholder="Username..." />
+          <button>Buscar</button>
+        </form>
+      </div>
+
+      <% if (users && users.length > 0) { %>
+      <div class="card">
+        <h3>Resultados</h3>
+
+        <% users.forEach(u => { %>
+          <a href="/admin/user/<%= u.id %>?tab=search" class="user-row clickable">
+            <span><%= u.username %></span>
+            <span>→</span>
+          </a>
+        <% }) %>
+
+      </div>
+      <% } %>
+
+      <% } %>
+
+      <!-- 📊 STATUS -->
+      <% if (tab === "status") { %>
+      <div class="card">
+        <h3>Status geral</h3>
+
+        <p>Total de usuários: <%= stats?.totalUsers || 0 %></p>
+        <p>Requests totais: <%= stats?.totalRequests || 0 %></p>
+      </div>
+      <% } %>
+
+      <!-- ➕ CREATE -->
+      <% if (tab === "create") { %>
+
+      <div class="card">
+        <h3>Criar usuário</h3>
+
+        <form method="POST" action="/admin/create">
+
+          <label>Username</label>
+          <input name="username" required />
+
+          <label>Senha inicial</label>
+          <input name="password" value="123456" />
+
+          <label>Rate Limit (req/hora)</label>
+          <input name="rate_limit" type="number" value="100" />
+
+          <label>Role</label>
+          <select name="role">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+
+          <div style="margin-top:10px;">
+            <label>
+              <input type="checkbox" name="force_reset" checked>
+              Forçar troca de senha no primeiro login
+            </label>
+          </div>
+
+          <button style="margin-top:15px;">Criar usuário</button>
+
+        </form>
+      </div>
+
+      <% } %>
+
+      <!-- 👤 EDIT USER -->
+      <% if (selectedUser) { %>
+
+      <div class="card">
+        <h3>Editar usuário</h3>
+
+        <form method="POST" action="/admin/user/<%= selectedUser.id %>">
+
+          <label>Username</label>
+          <input value="<%= selectedUser.username %>" disabled />
+
+          <label>API Key</label>
+          <input value="<%= selectedUser.api_key %>" class="mono" disabled />
+
+          <label>Rate Limit</label>
+          <input name="rate_limit" type="number" value="<%= selectedUser.rate_limit %>" />
+
+          <label>Role</label>
+          <select name="role">
+            <option value="user" <%= selectedUser.role === "user" ? "selected" : "" %>>User</option>
+            <option value="admin" <%= selectedUser.role === "admin" ? "selected" : "" %>>Admin</option>
+          </select>
+
+          <div style="margin-top:10px;">
+            <label>
+              <input type="checkbox" name="reset_usage" value="true">
+              Resetar uso
+            </label>
+          </div>
+
+          <button style="margin-top:15px;">Salvar alterações</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Estatísticas</h3>
+
+        <p>Uso atual: <%= selectedUser.usage_count %></p>
+        <p>Limite: <%= selectedUser.rate_limit %></p>
+
+        <div class="progress">
+          <div class="bar" style="width: <%= selectedUser.rate_limit > 0 ? Math.min((selectedUser.usage_count / selectedUser.rate_limit) * 100, 100) : 0 %>%"></div>
+        </div>
+
+        <p>
+          <%= selectedUser.rate_limit > 0 
+            ? Math.floor((selectedUser.usage_count / selectedUser.rate_limit) * 100) 
+            : 0 %>% usado
+        </p>
+
+        <p>Último reset: <%= selectedUser.usage_reset %></p>
+      </div>
+
+      <div class="card">
+        <h3>Zona perigosa 💀</h3>
+
+        <form method="POST" action="/admin/delete/<%= selectedUser.id %>">
+          <button style="background:#8b0000;">
+            Deletar usuário
+          </button>
+        </form>
+      </div>
+
+      <% } %>
+
+    </main>
+
+  </div>
+
+</div>
+
+</body>
+</html>

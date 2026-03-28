@@ -1,0 +1,18 @@
+apis:
+  main:
+    root: ./swagger.yaml
+
+l10n:
+  defaultLocale: en
+  locales:
+    - code: en
+      name: English
+    - code: pt
+      name: Portuguese
+    - code: pt-BR
+      name: Portuguese (Brazil)
+
+
+extends:
+  - recommended
+

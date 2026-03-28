@@ -1,0 +1,197 @@
+openapi: 3.0.0
+info:   
+  title: BrAPI
+  version: "1.0.0"
+
+servers: 
+  - url: http://localhost:3000/api/v1 
+
+components: 
+  securitySchemes: 
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+tags: 
+  - name: CPF
+    description: Operações relacionadas ao CPF
+  - name: CNPJ
+    description: Operações relacionadas ao CNPJ
+  
+paths:
+  /cpf/generate:
+    get:
+      tags: 
+        -  CPF
+      security: 
+        -  ApiKeyAuth: []
+      operationId: "1"
+      summary: "Gerador de CPF"
+      parameters: 
+        - name: state
+          in: query
+          required: false
+          schema:
+            type: string
+          description: "Sigla do estado (ex: sp)"
+      responses:
+        '200':
+          description: CPF gerado com sucesso
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cpf: 
+                    type: string
+                  state:
+                    type: string
+  /cpf/validate/{cpf}:
+    get:
+      tags: 
+        -  CPF
+      security: 
+        -  ApiKeyAuth: []
+      operationId: "2"
+      summary: "Validador de CPF"
+      parameters: 
+        - name: cpf
+          in: path
+          required: true
+          schema: 
+            type: string
+          description: CPF a ser validado
+      responses: 
+        '200':
+          description: Resultado da validação
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  cpf:
+                    type: string
+                  valid:
+                    type: boolean
+  
+  /cnpj/generate:
+    get:
+      tags: 
+        -  CNPJ
+      security: 
+        -  ApiKeyAuth: []
+      operationId: "3"
+      summary: "Gerador de CNPJ"
+      responses: 
+        '200':
+          description: CNPJ gerado com sucesso
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  cnpj:
+                    type: string
+  /cnpj/validate/{cnpj}:
+    get:
+      tags: 
+        -  CNPJ
+      security: 
+        -  ApiKeyAuth: []
+      operationId: "4"
+      summary: "Validador de CNPJ"
+      parameters: 
+        - name: cnpj
+          in: path
+          required: true
+          schema: 
+            type: string
+          description: CNPJ a ser validado
+      responses: 
+        '200':
+          description: Resultado da validação
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  cnpj:
+                    type: string
+                  valid:
+                    type: boolean
+  /pix/static:
+    get:
+      tags:
+        - PIX
+      security: 
+        -  ApiKeyAuth: []
+      operationId: "5"
+      summary: "PIX estático"
+      requestBody: 
+        description: Objeto JSON contendo informações sobre o pix
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                key:
+                  type: string
+                name:
+                  type: string
+                city:
+                  type: string
+                amount:
+                  type: string
+      responses: 
+        '200':
+          description: A resposta do pix copia e cola estático
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payload:
+                    type: string
+  /pix/qrcode:
+    get: 
+      tags:
+        - PIX
+      security: 
+        -  ApiKeyAuth: []
+      operationId: "6"
+      summary: "QRCode do pix"
+      parameters: 
+        - name: key
+          in: query
+          description: "Chave pix do receptor"
+          schema: 
+            type: string
+          required: true
+        - name: name
+          in: query
+          description: "Nome do receptor"
+          schema: 
+            type: string
+          required: true
+        - name: city
+          in: query
+          description: "Local de cobrança"
+          schema: 
+            type: string
+          required: false
+        - name: amount
+          in: query
+          description: "Quantidade/Valor"
+          schema: 
+            type: number
+          required: false
+      responses: 
+        '200':
+            description: "O QRCode do PIX"
+            content: 
+                image/png:
+                    schema: 
+                      type: string
+                      format: binary

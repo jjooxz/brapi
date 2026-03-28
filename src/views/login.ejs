@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrAPI - Login</title>
+    <link rel="stylesheet" href="/login/style.css">
+</head>
+
+<body>
+    <div class="logo" onclick="window.location.href='/'">
+        <img src="/index/apiLogo.png" alt="BrAPI Logo">
+    </div>
+    <div class="auth-container">
+        <div class="auth-layout">
+
+            <div class="auth-left">
+                <h1>Acesse sua conta</h1>
+                <p>Gerencie sua API e suas chaves com facilidade.</p>
+            </div>
+
+            <div class="auth-forms">
+
+                <div class="auth-card">
+                    <h3>Login</h3>
+                    <form method="POST" action="/auth/login">
+                        <input name="username" placeholder="Usuário" required />
+                        <input name="password" type="password" placeholder="Senha" required />
+                        <button class="primary">Entrar</button>
+                    </form>
+                </div>
+
+                <div class="auth-divider"><span>OU</span></div>
+
+                <div class="auth-card">
+                    <h3>Cadastro</h3>
+                    <form method="POST" action="/auth/register">
+                        <input name="username" placeholder="Usuário" required />
+                        <input name="password" type="password" placeholder="Senha" required />
+                        <button class="secondary">Criar conta</button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>
