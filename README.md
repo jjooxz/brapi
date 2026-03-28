@@ -19,7 +19,7 @@ API brasileira para geração e validação de **CPF**, **CNPJ** e **PIX** — c
 ## 📦 Instalação
 
 ```bash
-git clone https://github.com/seu-usuario/brapi.git
+git clone https://github.com/jjooxz/brapi.git
 cd brapi
 npm install
 ```
